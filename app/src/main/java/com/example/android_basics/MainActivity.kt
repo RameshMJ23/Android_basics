@@ -1,27 +1,28 @@
 package com.example.android_basics
 
 import android.os.Bundle
-import android.widget.RadioButton
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_checkbox_radiobutton.*
+import kotlinx.android.synthetic.main.activity_toast.*
+import kotlinx.android.synthetic.main.custom_toast.*
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_checkbox_radiobutton)
+        setContentView(R.layout.activity_toast)
 
-        btnOrder.setOnClickListener{
+        //Simple toast
+        /*btnToast.setOnClickListener{
+            Toast.makeText(this, "Simple toast!", Toast.LENGTH_SHORT).show()
+        }*/
 
-            val meatSelected = findViewById<RadioButton>(rgMeat.checkedRadioButtonId)
-                .text.toString()
+        btnToast.setOnClickListener{
+            Toast(applicationContext).apply {
+                duration = Toast.LENGTH_SHORT
+                view = layoutInflater.inflate(R.layout.custom_toast, clToast)
 
-            val finalOrder = "You ordered: \n" +
-                    "$meatSelected \n" +
-                    (if(cbCheese.isChecked) "Su cheese\n" else "") +
-                    (if(cbOnion.isChecked) "Su Onion\n" else "") +
-                    (if(cbSalad.isChecked) "Su Salad\n" else "")
-
-            tvFinalOrder.text = finalOrder
+                show()
+            }
         }
     }
 }

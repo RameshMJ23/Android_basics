@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Android_basics">
         <activity
+            android:name=".second_activity"
+            android:exported="true" />
+        <activity
             android:name=".activity_main_constraint"
             android:exported="true"
             android:label="@string/title_activity_main_constraint"
