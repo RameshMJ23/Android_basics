@@ -1,40 +1,86 @@
 package com.example.android_basics
 
-import android.content.Intent
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_main_first_screen.*
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import kotlinx.android.synthetic.main.activity_main_permissions.*
 
 class MainActivity : AppCompatActivity() {
+
+    lateinit var permissionLauncher: ActivityResultLauncher<String>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main_first_screen)
+        setContentView(R.layout.activity_main_permissions)
 
-        firstScBtn.setOnClickListener{
 
-            val name = etName.text.toString()
+        permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()){
+            permissions -> Log.d("MainActivityPermissions", permissions.toString())
+        }
 
-            val age = etAge.text.toString().toInt()
+        btnPermissions.setOnClickListener{
+            requestPermissions()
+        }
 
-            val country = etCountry.text.toString()
+        ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION)
 
-            val personDetails = Person(name, age, country)
+    }
 
-            Intent(this, SecondActivity::class.java).also {
+    private fun checkFgLocationPermission() = ContextCompat.checkSelfPermission(
+        applicationContext,
+        Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
-                //With individual values
-                /*it.putExtra("EXTRA_NAME", name)
+    private fun checkStoragePermission() = ContextCompat.checkSelfPermission(
+        applicationContext,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
 
-                it.putExtra("EXTRA_AGE", age)
+    private fun checkBgLocationPermission() = ContextCompat.checkSelfPermission(
+        applicationContext,
+        Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED
 
-                it.putExtra("EXTRA_COUNTRY", country)*/
 
-                //With data classes
-                it.putExtra("EXTRA_DETAILS", personDetails)
+    private fun requestPermissions(){
 
-                startActivity(it)
-            }
+        val permissionArray = mutableListOf<String>()
 
+        /*if(!checkFgLocationPermission()){
+           permissionArray.add(Manifest.permission.ACCESS_COARSE_LOCATION)
+        }
+        if(!checkBgLocationPermission()){
+           permissionArray.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+        }*/
+
+        if(!checkStoragePermission()){
+           permissionArray.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        }
+
+        if(permissionArray.isNotEmpty()){
+            Log.d("MainActivityPermissions", "Permission array is not empty")
+            //ActivityCompat.requestPermissions(this,permissionArray.toTypedArray(), 0)
+
+            permissionLauncher.launch(permissionArray[0])
         }
     }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        for(i in grantResults.indices){
+
+            if(grantResults[i] == PackageManager.PERMISSION_GRANTED){
+                Log.d("MainActivityPermissions", "Permission granted for ${permissions[i]}, with $requestCode")
+            }
+        }
+    }
+
 }
