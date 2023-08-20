@@ -16,11 +16,6 @@
             android:name=".SecondActivity"
             android:exported="true" />
         <activity
-            android:name=".activity_main_constraint"
-            android:exported="true"
-            android:label="@string/title_activity_main_constraint"
-            android:theme="@style/Theme.Android_basics.NoActionBar" />
-        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
